@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+
+namespace ParqueDiversiones
+
+    // Clase que simula una fila para asignar asientos
+    class ColaAsientos
+    
+      // Usamos una cola genérica para gestionar la fila
+        private Queue<int> asientos = new Queue<int>();
+        // Capacidad máxima de asientos en la atracción
+        const int capacidad = 30;
+
+        // Método para asignar un asiento a una persona
+        public void AsignarAsiento(int personaID)
+        
+            // Verifica que no se pase de la capacidad
+            if (asientos.Count < capacidad)
+                asientos.Enqueue(personaID); // Encola al usuario
+            else
+                Console.WriteLine("Todos los asientos están ocupados");
+
+
+        // Método para mostrar las personas en fila
+        public void MostrarAsientos()
+        
+            Console.WriteLine("Personas en los asientos:");
+            foreach (int id in asientos) // Recorre la cola en orden
+                Console.WriteLine($"Persona {id}"); // Muestra cada ID en orden
+}
+
+        // Método para liberar el primer asiento en la fila
+        public void LiberarAsiento()
+    
+            if (asientos.Count > 0)
+                Console.WriteLine($"Asiento liberado: Persona {asientos.Dequeue()}");
+            // Desencola al primer usuario (el primero en ingresar)
+        
+    
+
+    class Program
+    
+        static void Main()
+        {
+           // Crear instancia de la fila
+            var fila = new ColaAsientos();
+
+            // Simular ingreso de 30 personas
+            for (int i = 1; i <= 30; i++)
+                fila.AsignarAsiento(i); // Asigna asientos en orden
+
+            // Mostrar quienes están en fila
+            fila.MostrarAsientos();
+
+            // Liberar 5 asientos
+            Console.WriteLine("\nLiberando asientos...");
+            for (int i = 0; i < 5; i++)
+                fila.LiberarAsiento(); // Libera en orden
+
+            // Mostrar las personas en fila tras liberar
+            fila.MostrarAsientos();
+    
