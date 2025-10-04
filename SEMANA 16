@@ -1,0 +1,58 @@
+  import networkx as nx
+  import matplotlib.pyplot as plt
+  import time
+
+  # Función para leer datos de TXT y construir árbol
+  def construir_arbol(archivo_txt):
+      G = nx.DiGraph()  # Grafo dirigido para árbol
+      with open(archivo_txt, 'r') as f:
+          for linea in f:
+              linea = linea.strip()
+              if '>' in linea:
+                  padres = linea.split(' > ')
+                  for i in range(len(padres) - 1):
+                      G.add_edge(padres[i], padres[i+1])  # Agregar arista (padre -> hijo)
+                  G.add_node(padres[0])  # Asegurar nodo raíz
+      return G
+
+  # Función para reportería: Visualizar y consultar
+  def visualizar_y_consultar(G, titulo):
+      print(f"\n--- {titulo} ---")
+      print("Nodos:", list(G.nodes()))
+      print("Aristas:", list(G.edges()))
+      
+      # Consulta ejemplo: ¿Existe camino de raíz a hoja?
+      raiz = list(G.nodes())[0]  # Asumir primer nodo como raíz
+      hojas = [n for n in G.nodes() if G.out_degree(n) == 0]
+      if hojas:
+          hoja = hojas[0]
+          if nx.has_path(G, raiz, hoja):
+              print(f"Camino de {raiz} a {hoja}: {nx.shortest_path(G, raiz, hoja)}")
+      
+      # Visualización
+      plt.figure(figsize=(8, 6))
+      pos = nx.spring_layout(G)  # Layout para jerarquía
+      nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=2000, font_size=10, arrows=True)
+      plt.title(titulo)
+      plt.show()
+
+  # Medir tiempo
+  def medir_tiempo(archivo):
+      start = time.time()
+      G = construir_arbol(archivo)
+      end_build = time.time()
+      visualizar_y_consultar(G, f"Árbol de {archivo}")
+      end_vis = time.time()
+      print(f"Tiempo construcción: {end_build - start:.4f}s")
+      print(f"Tiempo visualización/consulta: {end_vis - end_build:.4f}s")
+
+  # Crear archivos TXT ficticios (ejecutar una vez)
+  with open('arbol_genealogico.txt', 'w') as f:
+      f.write("Abuelo > Padre > Hijo\nPadre > Hija\nAbuela > Madre > Nieta")
+  with open('arbol_frutas.txt', 'w') as f:
+      f.write("Fruta > Manzana > Roja\nFruta > Manzana > Verde\nFruta > Naranja > Dulce")
+
+  # Ejecutar ejemplos
+  medir_tiempo('arbol_genealogico.txt')
+  medir_tiempo('arbol_frutas.txt')
+  
